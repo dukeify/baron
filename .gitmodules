@@ -1,0 +1,4 @@
+[submodule "fake-jni"]
+	path = fake-jni
+	url = https://github.com/dukeify/fake-jni.git
+	branch = rewrite

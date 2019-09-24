@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# CMake
+build/
+
+# CLion
+cmake-build-debug/
+.idea/
+*.iml
+*.ipr
+*.iws
