@@ -5,9 +5,6 @@ project(baron VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 
 if(${BUILD_BARON_DEBUG})
-    set(BUILD_FAKE_JNI_DEBUG ON CACHE BOOL "")
-    set(CMAKE_BUILD_TYPE Release)
-else()
     set(BUILD_FAKE_JNI_DEBUG OFF CACHE BOOL "")
     set(CMAKE_BUILD_TYPE Debug)
     set(compiler_flags "\
@@ -15,8 +12,12 @@ else()
         -fstandalone-debug\
         -O0\
         -fno-inline\
-        -fno-omit-frame-pointer
+        -fno-omit-frame-pointer\
+        -DBARON_DEBUG
     ")
+else()
+    set(BUILD_FAKE_JNI_DEBUG ON CACHE BOOL "")
+    set(CMAKE_BUILD_TYPE Release)
 endif()
 
 if(${BUILD_BARON_ASAN})

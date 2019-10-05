@@ -2,38 +2,36 @@
 
 #include <fake-jni/jvm.h>
 
+#include <map>
+//#include <vector>
+#include <set>
+#include <utility>
+
 namespace Baron {
- namespace Interface {
-  class InvokeInterface : public FakeJni::InvokeInterface {
-  public:
-   using FakeJni::InvokeInterface::InvokeInterface;
-  };
-
-  class NativeInterface : public FakeJni::NativeInterface {
-  public:
-   using FakeJni::NativeInterface::NativeInterface;
-  };
-
-  class JvmtiInterfacee : public FakeJni::JvmtiInterface {
-  public:
-   using FakeJni::JvmtiInterface::JvmtiInterface;
-  };
- }
-
- namespace Env {
-  class JniEnv : public FakeJni::JniEnv {
-  public:
-   using FakeJni::JniEnv::JniEnv;
-  };
-
-  class JvmtiEnv : public FakeJni::JvmtiEnv {
-  public:
-   using FakeJni::JvmtiEnv::JvmtiEnv;
-  };
- }
-
  class Jvm : public FakeJni::Jvm {
  public:
+  using class_property_t = std::set<std::pair<std::string, std::string>>;
+
+  std::set<std::string> blacklistedClasses;
+  std::map<std::string, class_property_t> blacklistedFields;
+  std::map<std::string, class_property_t> blacklistedMethods;
+
   explicit Jvm(FILE * log = stdout);
+
+  //FakeJni::Jvm overrides
+  virtual const FakeJni::JClass * findClass(const char * name) const override;
+  virtual void destroy() override;
+
+  //baron specific
+  //Blacklist class from fabrication
+  virtual void blacklistClass(const char * name);
+  //Blacklist field in 'clazz' from fabrication
+  virtual void blacklistField(const char * clazz, const char * name, const char * signature);
+  //Globally blacklist field from fabrication
+  virtual void blacklistField(const char * name, const char * signature);
+  //Blacklist method in 'clazz' from fabrication
+  virtual void blacklistMethod(const char * clazz, const char * name, const char * signature);
+  //Globally blacklist method from fabrication
+  virtual void blacklistMethod(const char * name, const char * signature);
  };
 }

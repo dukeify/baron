@@ -5,7 +5,7 @@
 JNIEXPORT
 jint JNI_OnLoad(JavaVM * vm, void *) {
  printf("JNI_OnLoad!\n");
- return JNI_OK;
+ return JNI_VERSION_1_8;
 }
 
 JNIEXPORT

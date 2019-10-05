@@ -7,9 +7,9 @@ using namespace Baron;
 int main(int argc, char **argv) {
  Jvm vm;
 
- vm.attachLibrary("libjni.so");
+ vm.attachLibrary("./libjni.so");
 
- vm.removeLibrary("libjni.so");
+ vm.removeLibrary("./libjni.so");
 
  return 0;
 }
