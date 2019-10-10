@@ -22,9 +22,6 @@ endif()
 
 if(${BUILD_BARON_ASAN})
     set(compiler_flags "-fsanitize=address ${compiler_flags}")
-    set(BUILD_FAKE_JNI_ASAN ON CACHE BOOL "")
-else()
-    set(BUILD_FAKE_JNI_ASAN OFF CACHE BOOL "")
 endif()
 
 set(BUILD_FAKE_JNI_TESTS OFF CACHE BOOL "")

@@ -9,12 +9,17 @@
 
 namespace Baron {
  class Jvm : public FakeJni::Jvm {
- public:
-  using class_property_t = std::set<std::pair<std::string, std::string>>;
+ private:
+  jobject lastInstance = nullptr;
 
+ public:
   std::set<std::string> blacklistedClasses;
-  std::map<std::string, class_property_t> blacklistedFields;
-  std::map<std::string, class_property_t> blacklistedMethods;
+  //globally blacklisted class properties will be associated with an empty string
+  std::map<std::string, std::set<std::string>> blacklistedFields;
+  std::map<std::string, std::set<std::string>> blacklistedMethods;
+
+  std::set<jobject> fabricatedInstances;
+  std::map<FakeJni::JClass *, std::set<jobject>> fabricatedClassMappings;
 
   explicit Jvm(FILE * log = stdout);
 
@@ -23,15 +28,15 @@ namespace Baron {
   virtual void destroy() override;
 
   //baron specific
+  virtual bool isClassBlacklisted(const char * name);
+  virtual bool isMethodBlacklisted(const char * name, const char * sig, const char * clazz = "");
+  virtual bool isFieldBlacklisted(const char * name, const char * sig, const char * clazz = "");
   //Blacklist class from fabrication
   virtual void blacklistClass(const char * name);
   //Blacklist field in 'clazz' from fabrication
-  virtual void blacklistField(const char * clazz, const char * name, const char * signature);
-  //Globally blacklist field from fabrication
-  virtual void blacklistField(const char * name, const char * signature);
+  virtual void blacklistField(const char * name, const char * sig, const char * clazz = "");
   //Blacklist method in 'clazz' from fabrication
-  virtual void blacklistMethod(const char * clazz, const char * name, const char * signature);
-  //Globally blacklist method from fabrication
-  virtual void blacklistMethod(const char * name, const char * signature);
+  virtual void blacklistMethod(const char * name, const char * sig, const char * clazz = "");
+  virtual jobject fabricateInstance(jclass jclazz);
  };
 }
