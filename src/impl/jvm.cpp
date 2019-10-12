@@ -143,7 +143,7 @@ namespace Baron {
  }
 
  jobject Jvm::fabricateInstance(jclass jclazz) {
-  auto pinst = CX::union_cast<char **>(&lastInstance)();
+  auto pinst = CX::union_cast<char **>(&lastInstance);
   *pinst += 1;
   auto inst = (jobject)*pinst;
   fabricatedInstances.insert(inst);
