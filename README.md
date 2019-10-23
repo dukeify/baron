@@ -3,7 +3,7 @@
 ## What is baron?
 `baron` is a highly streamlined, cross-platform, reverse engineering framework for JNI modules and JVMTI agents. It 
 automates the process of discovering the API of a [blackbox module](https://en.wikipedia.org/wiki/Black_box) by probing 
-it through the JNI. In doing so, `baron` can compile the complete set of Java classes, class properties, JNI native 
+it through the JNI. In doing so, `baron` can discover the complete set of Java classes, class properties, JNI native 
 methods, and many other properties, required by a given module. 
 
 Once the module's API has been discovered, the user is free to implement any required Java class functionality in 
@@ -108,7 +108,8 @@ int main() {
 ```
 
 ## What properties are logged while probing?
-**Note:** Not all of these properties are currently implemented. See #2 for more details.
+**Note:** Not all of these properties are currently implemented. See 
+[#2](https://github.com/dukeify/baron/issues/2) for more details.
 
 - Registered classes
   - Class parent
@@ -128,7 +129,7 @@ int main() {
     - Serialized modifiers
     - Invocation count
 
-## Supported targets:
+## Supported Targets
 `baron` supports all targets that `fake-jni` supports. See 
 [Supported targets](https://github.com/dukeify/fake-jni#supported-targets). 
 
