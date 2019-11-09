@@ -42,7 +42,7 @@ namespace Baron {
   auto clazz = FakeJni::Jvm::findClass(name);
   if (!clazz) {
    clazz = new JClass(name);
-   ref.registerClass(clazz);
+   ref.registerClass(clazz, true);
 #ifdef BARON_DEBUG
    fprintf(getLog(), "BARON INFO: Fabricated class '%s' -> 0x%lx\n", name, (intptr_t)clazz);
 #endif
