@@ -116,17 +116,17 @@ int main() {
   - Fabrication flag
   - Total Instance count at destruction
   - Fabricated and constructed instance counts
-  - Serialized modifiers
+  - Deserialized modifiers
   - Registered fields
     - Name and signature
     - Fabrication flag
-    - Serialized modifiers
+    - Deserialized modifiers
     - Access count
     - Default fabricated value
   - Registered functions
     - Name and signature
     - Fabrication flag
-    - Serialized modifiers
+    - Deserialized modifiers
     - Invocation count
 
 ## Supported Targets
