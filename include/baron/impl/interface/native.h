@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fake-jni/jvm.h>
+#include <cx/vararg.h>
 
 #include "baron/impl/jvm.h"
 
@@ -13,7 +14,7 @@ namespace Baron::Interface {
 
   //inpl/interface/native/object.cpp
   jobject allocObject(jclass) const override;
-  jobject newObjectV(jclass, jmethodID, va_list) const override;
+  jobject newObjectV(jclass, jmethodID, CX::va_list_t&) const override;
   jobject newObjectA(jclass, jmethodID, const jvalue *) const override;
   jclass getObjectClass(jobject) const override;
   jboolean isInstanceOf(jobject, jclass) const override;

@@ -13,7 +13,7 @@ if(${BUILD_BARON_DEBUG})
         -O0\
         -fno-inline\
         -fno-omit-frame-pointer\
-        -DBARON_DEBUG
+        -DBARON_DEBUG\
     ")
 else()
     set(BUILD_FAKE_JNI_DEBUG OFF CACHE BOOL "")
@@ -27,6 +27,9 @@ endif()
 
 set(BUILD_FAKE_JNI_TESTS OFF CACHE BOOL "")
 set(BUILD_FAKE_JNI_EXAMPLES OFF CACHE BOOL "")
+
+set(CMAKE_CXX_FLAGS ${compiler_flags})
+set(CMAKE_C_FLAGS ${compiler_flags})
 
 add_subdirectory(fake-jni)
 

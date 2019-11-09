@@ -7,7 +7,7 @@ namespace Baron::Interface {
   return vm.fabricateInstance(jclazz);
  }
 
- jobject NativeInterface::newObjectV(jclass jclazz, jmethodID jmid, va_list list) const {
+ jobject NativeInterface::newObjectV(jclass jclazz, jmethodID jmid, CX::va_list_t& list) const {
   using namespace FakeJni;
   auto mid = (JMethodID *)jmid;
   if (mid->isArbitrary) {

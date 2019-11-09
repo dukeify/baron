@@ -25,7 +25,7 @@ namespace Baron {
 
   //FakeJni::Jvm overrides
   virtual const FakeJni::JClass * findClass(const char * name) const override;
-  virtual void destroy() override;
+  virtual jint destroy() override;
 
   //baron specific
   virtual bool isClassBlacklisted(const char * name);

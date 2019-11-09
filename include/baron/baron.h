@@ -7,5 +7,6 @@
 #include "baron/impl/interface/jvmti.h"
 #include "baron/impl/env/jni.h"
 #include "baron/impl/env/jvmti.h"
+#include "baron/util/util.h"
 
 namespace Baron {}

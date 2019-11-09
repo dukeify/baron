@@ -13,6 +13,13 @@ fprintf(\
 #define LOG_BLACKLIST_MATCH
 #endif
 
+#ifdef BARON_DEBUG
+#define LOG_FABRICATED_METHOD \
+fprintf(vm.getLog(), "BARON INFO: Fabricated method '%s%s' -> 0x%lx\n", name, sig, (intptr_t)mid);
+#else
+#define LOG_FABRICATED_CLASS
+#endif
+
 #define CHECK_BLACKLIST \
 JClass * clazz = *jclazz;\
 const auto className = clazz->getName();\
@@ -42,6 +49,7 @@ namespace Baron::Interface {
    mid = new JMethodID(fabricatedMethodCallback, sig, name, JMethodID::PUBLIC);
    JClass * clazz = *jclazz;
    clazz->registerMethod(mid);
+   LOG_FABRICATED_METHOD
   }
   return mid;
  }
@@ -55,6 +63,7 @@ namespace Baron::Interface {
    mid = new JMethodID(fabricatedMethodCallback, sig, name, JMethodID::PUBLIC | JMethodID::STATIC);
    JClass * clazz = *jclazz;
    clazz->registerMethod(mid);
+   LOG_FABRICATED_METHOD
   }
   return mid;
  }

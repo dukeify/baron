@@ -11,5 +11,7 @@ int main(int argc, char **argv) {
 
  vm.removeLibrary("./libjni.so");
 
+ vm.destroy();
+
  return 0;
 }
