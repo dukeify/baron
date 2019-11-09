@@ -40,3 +40,5 @@ cmake-build-debug/
 *.iml
 *.ipr
 *.iws
+
+TEMP/

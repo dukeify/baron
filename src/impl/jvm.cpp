@@ -12,9 +12,9 @@
 
 #ifdef BARON_DEBUG
 #define DEBUG_DOUBLE_BLACKLIST \
-else {\
- fprintf(getLog(), "BARON WARNING: Encapsulating class is already blacklisted!\n");\
-}
+fprintf(getLog(), "BARON WARNING: Encapsulating class is already blacklisted!\n");\
+return;
+
 #else
 #define DEBUG_DOUBLE_BLACKLIST
 #endif
@@ -33,7 +33,7 @@ namespace Baron {
   using namespace FakeJni;
   auto& ref = const_cast<Jvm &>(*this);
   //Ignore class lookups for blacklisted classes
-  if (std::find(blacklistedClasses.begin(), blacklistedClasses.end(), name) != blacklistedClasses.end()) {
+  if (isClassBlacklisted(name)) {
 #ifdef BARON_DEBUG
    fprintf(getLog(), "BARON INFO: Ignored lookup request for blacklisted class '%s'\n", name);
 #endif
@@ -86,22 +86,23 @@ namespace Baron {
   return JNI_OK;
  }
 
- bool Jvm::isClassBlacklisted(const char * name) {
+ bool Jvm::isClassBlacklisted(const char * name) const {
   auto end = blacklistedClasses.end();
   return (std::find(blacklistedClasses.begin(), end, std::string(name)) != end);
  }
 
- bool Jvm::isMethodBlacklisted(const char * name, const char * sig, const char * clazz) {
+ bool Jvm::isMethodBlacklisted(const char * name, const char * sig, const char * clazz) const {
   auto identity = std::string(name) + sig;
+  auto& ref = const_cast<Jvm &>(*this);
   //check global blacklist first
-  auto& globalBlacklist = blacklistedMethods[std::string("")];
+  auto& globalBlacklist = ref.blacklistedMethods[std::string("")];
   auto end = globalBlacklist.end();
   if (std::find(globalBlacklist.begin(), end, identity) != end) {
    return true;
   }
   //if the requested blacklist lookup wasn't global
   if (clazz[0]) {
-   auto& classedBlacklist = blacklistedMethods[std::string(clazz)];
+   auto& classedBlacklist = ref.blacklistedMethods[std::string(clazz)];
    end = classedBlacklist.end();
    if (std::find(classedBlacklist.begin(), end, identity) != end) {
     return true;
@@ -110,17 +111,18 @@ namespace Baron {
   return false;
  }
 
- bool Jvm::isFieldBlacklisted(const char * name, const char * sig, const char * clazz) {
+ bool Jvm::isFieldBlacklisted(const char * name, const char * sig, const char * clazz) const {
   auto identity = std::string(name) + "::" + sig;
+  auto& ref = const_cast<Jvm &>(*this);
   //check global blacklist first
-  auto& globalBlacklist = blacklistedFields[std::string("")];
+  auto& globalBlacklist = ref.blacklistedFields[std::string("")];
   auto end = globalBlacklist.end();
   if (std::find(globalBlacklist.begin(), end, identity) != end) {
    return true;
   }
   //if the requested blacklist lookup wasn't global
   if (clazz[0]) {
-   auto& classedBlacklist = blacklistedFields[std::string(clazz)];
+   auto& classedBlacklist = ref.blacklistedFields[std::string(clazz)];
    end = classedBlacklist.end();
    if (std::find(classedBlacklist.begin(), end, identity) != end) {
     return true;
@@ -131,23 +133,23 @@ namespace Baron {
 
  void Jvm::blacklistClass(const char * name) {
   if (isClassBlacklisted(name)) {
-   blacklistedClasses.insert(name);
+   DEBUG_DOUBLE_BLACKLIST
   }
-  DEBUG_DOUBLE_BLACKLIST
+  blacklistedClasses.insert(name);
  }
 
  void Jvm::blacklistField(const char * name, const char * sig, const char * clazz) {
   if (isFieldBlacklisted(name, sig, clazz)) {
-   blacklistedFields[clazz].insert(std::string(name) + "::" + sig);
+   DEBUG_DOUBLE_BLACKLIST
   }
-  DEBUG_DOUBLE_BLACKLIST
+  blacklistedFields[clazz].insert(std::string(name) + "::" + sig);
  }
 
  void Jvm::blacklistMethod(const char * name, const char * sig, const char * clazz) {
   if (isMethodBlacklisted(name, sig, clazz)) {
-   blacklistedMethods[clazz].insert(std::string(name) + sig);
+   DEBUG_DOUBLE_BLACKLIST
   }
-  DEBUG_DOUBLE_BLACKLIST
+  blacklistedMethods[clazz].insert(std::string(name) + sig);
  }
 
  jobject Jvm::fabricateInstance(jclass jclazz) {

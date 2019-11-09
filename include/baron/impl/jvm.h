@@ -28,9 +28,9 @@ namespace Baron {
   virtual jint destroy() override;
 
   //baron specific
-  virtual bool isClassBlacklisted(const char * name);
-  virtual bool isMethodBlacklisted(const char * name, const char * sig, const char * clazz = "");
-  virtual bool isFieldBlacklisted(const char * name, const char * sig, const char * clazz = "");
+  virtual bool isClassBlacklisted(const char * name) const;
+  virtual bool isMethodBlacklisted(const char * name, const char * sig, const char * clazz = "") const;
+  virtual bool isFieldBlacklisted(const char * name, const char * sig, const char * clazz = "") const;
   //Blacklist class from fabrication
   virtual void blacklistClass(const char * name);
   //Blacklist field in 'clazz' from fabrication

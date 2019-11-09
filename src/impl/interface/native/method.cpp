@@ -4,7 +4,7 @@
 #define LOG_BLACKLIST_MATCH \
 fprintf(\
  vm.getLog(),\
- "BARON INFO: Ignored blacklisted method lookup '%s#%s::%s'!\n",\
+ "BARON INFO: Ignored blacklisted method lookup '%s#%s%s'!\n",\
  className,\
  name,\
  sig\

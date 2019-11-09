@@ -5,7 +5,6 @@ project(baron VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 
 if(${BUILD_BARON_DEBUG})
-    set(BUILD_FAKE_JNI_DEBUG ON CACHE BOOL "")
     set(CMAKE_BUILD_TYPE Debug)
     set(compiler_flags "\
         -g\
@@ -16,7 +15,6 @@ if(${BUILD_BARON_DEBUG})
         -DBARON_DEBUG\
     ")
 else()
-    set(BUILD_FAKE_JNI_DEBUG OFF CACHE BOOL "")
     set(CMAKE_BUILD_TYPE Release)
     set(compiler_flags "-O3")
 endif()
@@ -25,6 +23,7 @@ if(${BUILD_BARON_ASAN})
     set(compiler_flags "-fsanitize=address ${compiler_flags}")
 endif()
 
+set(BUILD_FAKE_JNI_DEBUG OFF CACHE BOOL "")
 set(BUILD_FAKE_JNI_TESTS OFF CACHE BOOL "")
 set(BUILD_FAKE_JNI_EXAMPLES OFF CACHE BOOL "")
 
