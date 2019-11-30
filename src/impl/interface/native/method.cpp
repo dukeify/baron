@@ -17,7 +17,7 @@ fprintf(\
 #define LOG_FABRICATED_METHOD \
 fprintf(vm.getLog(), "BARON INFO: Fabricated method '%s%s' -> 0x%lx\n", name, sig, (intptr_t)mid);
 #else
-#define LOG_FABRICATED_CLASS
+#define LOG_FABRICATED_METHOD
 #endif
 
 #define CHECK_BLACKLIST \
@@ -28,15 +28,21 @@ if (vm.isClassBlacklisted(className) || vm.isMethodBlacklisted(name, sig, classN
  return nullptr;\
 }
 
-//TODO
-static void * fabricatedMethodCallback(JNIEnv * jenv, jobject jobj, ...) {
-// using namespace FakeJni;
-// auto env = (JniEnv *)jenv;
-// auto& vm = env->getVM();
-// const auto& log = vm.getLog();
-// fprintf(log, "BARON INFO: Invoked ");
- return nullptr;
-}
+#ifdef BARON_DEBUG
+#define LOG_ARBITRARY_CALLBACK \
+const auto& log = vm.getLog();\
+fprintf(log, "BARON INFO: Invoked fabricated function!\n");
+#else
+#define LOG_ARBITRARY_CALLBACK
+#endif
+
+#define DEFINE_ARBITRARY_CALLBACK \
+const auto callback = [=](JNIEnv * jenv, jobject jobj, jvalue * values) -> jvalue {\
+ LOG_ARBITRARY_CALLBACK\
+ return vm.fabricateValue(jclazz);\
+};
+
+//fprintf(log, "BARON INFO: Invoked fabricated function: %s::%s%s\n", className, name, sig);
 
 //TODO once fake-jni supports user-defined core classes, append the backtrace to the JMethodID for later debugging
 namespace Baron::Interface {
@@ -44,27 +50,28 @@ namespace Baron::Interface {
  jmethodID NativeInterface::getMethodID(jclass const jclazz, const char * name, const char * sig) const {
   using namespace FakeJni;
   CHECK_BLACKLIST
+  DEFINE_ARBITRARY_CALLBACK
   auto mid = (JMethodID *)FakeJni::NativeInterface::getMethodID(jclazz, name, sig);
   if (!mid) {
-   mid = new JMethodID(fabricatedMethodCallback, sig, name, JMethodID::PUBLIC);
-   JClass * clazz = *jclazz;
+   mid = new JMethodID(callback, sig, name, JMethodID::PUBLIC);
    clazz->registerMethod(mid);
    LOG_FABRICATED_METHOD
   }
-  return mid;
+  //search for method again incase instrumentation occurred downstream (JClass::registerMethod)
+  return FakeJni::NativeInterface::getMethodID(jclazz, name, sig);
  }
 
  //TODO create backtrace of invocation
  jmethodID NativeInterface::getStaticMethodID(jclass jclazz, const char * name, const char * sig) const {
   using namespace FakeJni;
   CHECK_BLACKLIST
+  DEFINE_ARBITRARY_CALLBACK
   auto mid = (JMethodID *)FakeJni::NativeInterface::getStaticMethodID(jclazz, name, sig);
   if (!mid) {
-   mid = new JMethodID(fabricatedMethodCallback, sig, name, JMethodID::PUBLIC | JMethodID::STATIC);
-   JClass * clazz = *jclazz;
+   mid = new JMethodID(callback, sig, name, JMethodID::PUBLIC | JMethodID::STATIC);
    clazz->registerMethod(mid);
    LOG_FABRICATED_METHOD
   }
-  return mid;
+  return FakeJni::NativeInterface::getStaticMethodID(jclazz, name, sig);
  }
 }

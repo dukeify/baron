@@ -3,7 +3,6 @@
 #include <fake-jni/jvm.h>
 
 #include <map>
-//#include <vector>
 #include <set>
 #include <utility>
 
@@ -19,6 +18,8 @@ namespace Baron {
   std::map<std::string, std::set<std::string>> blacklistedMethods;
 
   std::set<jobject> fabricatedInstances;
+  //TODO provide backtrace of accesses and values at destruction
+  std::map<const std::pair<jobject, const FakeJni::JFieldID *>, jvalue> fabricatedValues;
   std::map<FakeJni::JClass *, std::set<jobject>> fabricatedClassMappings;
 
   explicit Jvm(FILE * log = stdout);
@@ -37,6 +38,8 @@ namespace Baron {
   virtual void blacklistField(const char * name, const char * sig, const char * clazz = "");
   //Blacklist method in 'clazz' from fabrication
   virtual void blacklistMethod(const char * name, const char * sig, const char * clazz = "");
-  virtual jobject fabricateInstance(jclass jclazz);
+  virtual jobject fabricateInstance(jclass jclazz) const;
+  virtual jvalue fabricateValue(jclass clazz) const;
+  virtual bool isFabricated(jobject jobj) const noexcept;
  };
 }

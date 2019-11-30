@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "baron/impl/jvm.h"
+#include "baron/impl/class.h"
 #include "baron/impl/interface/invoke.h"
 #include "baron/impl/interface/native.h"
 #include "baron/impl/interface/jvmti.h"
@@ -9,6 +10,7 @@
 #include "baron/util/util.h"
 
 #include <algorithm>
+#include <stdexcept>
 
 #ifdef BARON_DEBUG
 #define DEBUG_DOUBLE_BLACKLIST \
@@ -41,7 +43,7 @@ namespace Baron {
   }
   auto clazz = FakeJni::Jvm::findClass(name);
   if (!clazz) {
-   clazz = new JClass(name);
+   clazz = new Baron::Internal::JClass(name);
    ref.registerClass(clazz, true);
 #ifdef BARON_DEBUG
    fprintf(getLog(), "BARON INFO: Fabricated class '%s' -> 0x%lx\n", name, (intptr_t)clazz);
@@ -73,6 +75,7 @@ namespace Baron {
      fprintf(log, "\t\t - Fabricated: %s\n", (field->isArbitrary ? "yes" : "no"));
     }
     auto & methods = clazz->getMethods();
+    fprintf(log, "\t - Methods: %u\n", methods.size());
     for (auto & method : methods) {
      fprintf(log, "\t\t'%s%s':\n", method->getName(), method->getSignature());
      mods = method->getModifiers();
@@ -152,12 +155,31 @@ namespace Baron {
   blacklistedMethods[clazz].insert(std::string(name) + sig);
  }
 
- jobject Jvm::fabricateInstance(jclass jclazz) {
+ jobject Jvm::fabricateInstance(jclass jclazz) const {
+  auto& ref = const_cast<Jvm &>(*this);
   auto pinst = CX::union_cast<char **>(&lastInstance);
   *pinst += 1;
   auto inst = (jobject)*pinst;
-  fabricatedInstances.insert(inst);
-  fabricatedClassMappings[*jclazz].insert(inst);
+  ref.fabricatedInstances.insert(inst);
+  ref.fabricatedClassMappings[*jclazz].insert(inst);
   return inst;
+ }
+
+ jvalue Jvm::fabricateValue(jclass jclazz) const {
+  jvalue value;
+  FakeJni::JClass *clazz = *jclazz;
+  if (clazz->isArbitrary) {
+   value.l = fabricateInstance(jclazz);
+  } else {
+   if (!clazz->isPrimitive) {
+    //TODO instance fabrication for non-arbitrary classes
+    throw std::runtime_error("FATAL: Value fabrication for non-primitive types is not currently supported!");
+   }
+  }
+  return value;
+ }
+
+ bool Jvm::isFabricated(jobject jobj) const noexcept {
+  return fabricatedInstances.find(jobj) != fabricatedInstances.end();
  }
 }

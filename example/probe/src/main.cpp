@@ -7,10 +7,9 @@ using namespace Baron;
 int main(int argc, char **argv) {
  Jvm vm;
 
- vm.registerDefaultSignalHandler();
- vm.blacklistMethod("exampleMethod", "()V");
+// vm.registerDefaultSignalHandler();
  vm.attachLibrary("./libjni.so");
- //vm.start();
+// vm.start();
  vm.removeLibrary("./libjni.so");
  vm.destroy();
 

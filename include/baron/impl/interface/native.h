@@ -14,14 +14,13 @@ namespace Baron::Interface {
 
   //inpl/interface/native/object.cpp
   jobject allocObject(jclass) const override;
-  jobject newObjectV(jclass, jmethodID, CX::va_list_t&) const override;
-  jobject newObjectA(jclass, jmethodID, const jvalue *) const override;
   jclass getObjectClass(jobject) const override;
   jboolean isInstanceOf(jobject, jclass) const override;
   //Currently unsupported by fake-jni
 //  jclass defineClass(const char *, jobject, const jbyte *, jsize) const override;
   //Handled by baron jvm implementation
 //  jclass findClass(const char *) const override;
+
 
   //inpl/interface/native/method.cpp
   jmethodID getMethodID(jclass, const char *, const char *) const override;
