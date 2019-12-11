@@ -9,6 +9,10 @@ if (!value) {\
  abort();\
 }
 
+void exampleNativeMethod() {
+ printf("Eample Native Method!\n");
+}
+
 JNIEXPORT
 jint JNI_OnLoad(JavaVM * vm, void *) {
  printf("EXAMPLE AGENT: JNI_OnLoad!\n");
@@ -28,6 +32,12 @@ jint JNI_OnLoad(JavaVM * vm, void *) {
  _CHECK_JNI_VALUE(fid)
  jint value = env->GetIntField(inst, fid);
  printf("EXAMPLE AGENT: Value: someField = %i\n", value);
+ JNINativeMethod nm {
+  "test",
+  "()V",
+  (decltype(nm.fnPtr))&exampleNativeMethod
+ };
+ env->RegisterNatives(clazz, &nm, 1);
  return JNI_VERSION_1_8;
 }
 
