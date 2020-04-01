@@ -27,8 +27,8 @@ set(BUILD_FAKE_JNI_DEBUG OFF CACHE BOOL "")
 set(BUILD_FAKE_JNI_TESTS OFF CACHE BOOL "")
 set(BUILD_FAKE_JNI_EXAMPLES OFF CACHE BOOL "")
 
-set(CMAKE_CXX_FLAGS ${compiler_flags})
-set(CMAKE_C_FLAGS ${compiler_flags})
+string(APPEND CMAKE_CXX_FLAGS " ${compiler_flags}")
+string(APPEND CMAKE_C_FLAGS " ${compiler_flags}")
 
 add_subdirectory(fake-jni)
 
