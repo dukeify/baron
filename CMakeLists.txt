@@ -20,7 +20,11 @@ else()
 endif()
 
 if(${BUILD_BARON_ASAN})
-    set(compiler_flags "-fsanitize=address ${compiler_flags}")
+ string(APPEND compiler_flags " -fsanitize=address")
+endif()
+
+if(${BUILD_BARON_UBSAN})
+ string(APPEND compiler_flags " -fsanitize=undefined")
 endif()
 
 set(BUILD_FAKE_JNI_DEBUG OFF CACHE BOOL "")
