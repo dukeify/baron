@@ -1,5 +1,9 @@
 # baron
 
+## DEPRECATION WARNING 
+This branch is deprecated. See the [deprecation warning](https://github.com/dukeify/fake-jni/blob/master/README.md#deprecation-warning) in the [`fake-jni` prototype](https://github.com/dukeify/fake-jni). Once the new version of 
+`fake-jni` is stable, development of this project will resume.
+
 ## What is baron?
 `baron` is a highly streamlined, cross-platform, reverse engineering framework for JNI modules and JVMTI agents. It 
 automates the process of discovering the API of a [blackbox module](https://en.wikipedia.org/wiki/Black_box) by probing 
